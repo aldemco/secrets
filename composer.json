@@ -1,0 +1,71 @@
+{
+    "name": "aldemco/secrets",
+    "version": "1.0",
+    "description": "The package implements the functionality of creating, storing, checking secrets",
+    "keywords": [
+        "aldemco",
+        "laravel",
+        "secrets"
+    ],
+    "homepage": "https://github.com/aldemco/secrets",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Demchenko",
+            "email": "aldemc.web@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "spatie/laravel-package-tools": "^1.9.2",
+        "illuminate/contracts": "^9.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.5",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aldemco\\Secrets\\": "src",
+            "Aldemco\\Secrets\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aldemco\\Secrets\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/phpunit",
+        "format": "vendor/bin/pint
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aldemco\\Secrets\\SecretsServiceProvider"
+            ],
+            "aliases": {
+                "Secrets": "Aldemco\\Secrets\\Facades\\Secrets"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

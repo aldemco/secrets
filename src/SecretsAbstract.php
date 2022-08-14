@@ -80,6 +80,14 @@ abstract class SecretsAbstract
         return true;
     }
 
+    protected function checkInterval(Secret $lastSecret, int $seconds): void
+    {
+        if ($lastSecret->created_at->addSeconds($seconds) >= Carbon::now()) {
+            throw new SecretValidatorException('Too frequent requests');
+        }
+
+    }
+
     protected static function findAll(
         $context = null,
         $contextId = null,

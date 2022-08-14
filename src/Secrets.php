@@ -104,6 +104,27 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
+    public function withInterval(int $seconds): self
+    {
+        $seconds = $seconds ?? config('secrets.interval', 60);
+        /**
+         * @var Secret $lastSecret
+         */
+        $lastSecret = self::findAll(
+            context:$this->model->context,
+            contextId:$this->model->context_id,
+            owner:$this->model->owner_class,
+            ownerId:$this->model->owner_id,
+            limit:1
+        )->first();
+
+        if ($lastSecret !== null) {
+            $this->checkInterval($lastSecret, $seconds);
+        }
+
+        return $this;
+    }
+
     public function save():self
     {
         $this->setSecret($this->encryptedSecretStr ?? $this->secretStr);

@@ -5,9 +5,9 @@ namespace Aldemco\Secrets;
 use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Exceptions\SecretValidatorException;
 use Aldemco\Secrets\Models\Secret;
-use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use Closure;
+use Illuminate\Database\Eloquent\Collection;
 
 class Checker extends SecretsAbstract
 {
@@ -39,9 +39,8 @@ class Checker extends SecretsAbstract
 
     private ?Closure $onSuccess = function(){};
 
-    public function __construct(string|int $inpitSecretStr, $context = '', $contextId = '', $owner = '', $ownerId = '')
+    public function __construct(string $inpitSecretStr, $context = '', $contextId = '', $owner = '', $ownerId = '')
     {
-
         $this->context = $context ?? $this->context = Secrets::getcontextClass();
         $this->contextId = $contextId;
         $this->owner = $owner;
@@ -53,9 +52,8 @@ class Checker extends SecretsAbstract
             $secretHasherClass = config('secrets.secret_hasher', Aldemco\Secrets\SecretHasher::class);
             $this->hasher = new $secretHasherClass;
         }
-
     }
-    
+
     protected function setCurrentSecret(Secret $secret): void
     {
         $this->currentSecret = $secret;
@@ -200,7 +198,6 @@ class Checker extends SecretsAbstract
                     if ($this->onSuccess) {
                         $this->onSuccess->call($this);
                     }
-
                 }
             } catch (SecretValidatorException $e) {
                 $this->execptions->add($e);
@@ -215,9 +212,6 @@ class Checker extends SecretsAbstract
             if ($this->isCorrectSecret === true) {
                 return false;
             }
-
         });
     }
-
-
 }

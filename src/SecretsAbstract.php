@@ -2,15 +2,14 @@
 
 namespace Aldemco\Secrets;
 
-use Aldemco\Secrets\Models\Secret;
 use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Exceptions\SecretValidatorException;
-use Illuminate\Database\Eloquent\Collection;
+use Aldemco\Secrets\Models\Secret;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 abstract class SecretsAbstract
 {
-
     protected function secretTypeValidator($secret): void
     {
         if (! (bool) (is_string($secret) || is_numeric($secret))) {
@@ -24,7 +23,6 @@ abstract class SecretsAbstract
             throw new SecretValidatorException('Incorrect secret length');
         }
     }
-
 
     protected function isValidUntil(Secret $secret): bool
     {
@@ -85,7 +83,6 @@ abstract class SecretsAbstract
         if ($lastSecret->created_at->addSeconds($seconds) >= Carbon::now()) {
             throw new SecretValidatorException('Too frequent requests');
         }
-
     }
 
     protected static function findAll(

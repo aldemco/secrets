@@ -15,9 +15,12 @@ class Secrets extends SecretsAbstract
 
     private string $encryptedSecretStr;
 
+    private int $secretStrLength = 6;
+
+    private SecretGeneratorContract $secretGenerator;
+
     public function __construct($context = null, $contextId = null, $owner = null, $ownerId = null)
     {
-
         $this->initModel();
 
         $this->model->owner = $owner;
@@ -29,9 +32,10 @@ class Secrets extends SecretsAbstract
 
         $this->model->context = $context;
         $this->model->context_id = $contextId;
-        
+
         $secretGeneratorClass = config('secrets.secret_generator', Aldemco\Secrets\SecretGenerator::class);
-        $this->genSecretStr(new $secretGeneratorClass);
+        $this->secretGenerator = new $secretGeneratorClass;
+        $this->genSecretStr(null);
 
         if (config('secrets.is_crypt') === true) {
             $hasherClass = config('secrets.secret_hasher', Aldemco\Secrets\SecretHasher::class);
@@ -44,9 +48,12 @@ class Secrets extends SecretsAbstract
         return (string) $this->secretStr;
     }
 
-    public function genSecretStr(SecretGeneratorContract $generator): self
+    public function genSecretStr(?SecretGeneratorContract $generator): self
     {
-        $this->secretStr = $generator->generate(config('secrets.length', 6));
+        if (! $generator instanceof SecretGeneratorContract) {
+            $generator = $this->secretGenerator;
+        }
+        $this->secretStr = $generator->generate($this->secretStrLength ?? config('secrets.length', 6));
 
         return $this;
     }
@@ -65,6 +72,14 @@ class Secrets extends SecretsAbstract
     {
         $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);
         $this->model->is_crypt = true;
+
+        return $this;
+    }
+
+    public function length(int $length): self
+    {
+        $this->secretStrLength = $length;
+        $this->genSecretStr(null);
 
         return $this;
     }
@@ -125,7 +140,7 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
-    public function save():self
+    public function save(): self
     {
         $this->setSecret($this->encryptedSecretStr ?? $this->secretStr);
 
@@ -168,5 +183,4 @@ class Secrets extends SecretsAbstract
     {
         return new Checker($inputSecret, $context, $contextId, $owner, $ownerId);
     }
-
 }

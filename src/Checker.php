@@ -122,7 +122,33 @@ class Checker extends SecretsAbstract
         return $this;
     }
 
+    protected function decrypt(): void
+    {
+        $this->hasher->check($this->inputSecretStr, $this->currentSecret->secret);
+    }
 
+    protected function findSecrets(int $limit = 1, string $secretStr = ''): void
+    {
+        $this->secretCollection = Secrets::findAll(
+            $context = $this->context,
+            $contextId = $this->contextId,
+            $owner = $this->owner,
+            $ownerId = $this->ownerId,
+            $secret = $secretStr,
+            $limit = $limit,
+        );
+    }
+
+    protected function isValid(Secret $secret): void
+    {
+        $this->isValidUntil($secret);
+        $this->isValidFrom($secret);
+        if ($this->isUnlimitedAttemps == false) {
+            $this->isAllowEnter($secret);
+        }
+
+        $this->isNotUsed($secret);
+    }
 
 
 }

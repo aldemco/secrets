@@ -23,6 +23,61 @@ abstract class SecretsAbstract
         }
     }
 
+
+    protected function isValidUntil(Secret $secret): bool
+    {
+        if (Carbon::now() > $secret->valid_until && $secret->valid_until !== null) {
+            throw new SecretValidatorException('Secret expired');
+        }
+
+        return true;
+    }
+
+    protected function isValidFrom(Secret $secret): bool
+    {
+        if (Carbon::now() <= $secret->valid_from && $secret->valid_from !== null) {
+            throw new SecretValidatorException('The secret is not valid');
+        }
+
+        return true;
+    }
+
+    protected function isAllowEnter(Secret $secret): bool
+    {
+        if ($secret->attemps_cnt <= 0) {
+            throw new SecretValidatorException('The limit of attempts to enter a secret has been exhausted');
+        }
+
+        return true;
+    }
+
+    protected function isNotUsed(Secret $secret): bool
+    {
+        if ($secret->success_enter !== null) {
+            throw new SecretValidatorException('Secret already used');
+        }
+
+        return true;
+    }
+
+    protected function isCorrectSecret(string $secret, string $inputSecret): bool
+    {
+        if ($secret !== $inputSecret) {
+            throw new SecretValidatorException('Wrong Secret');
+        }
+
+        return true;
+    }
+
+    protected function isCorrectEncryptSecret(SecretHasherContract $hasher, string|int $hash, string|int $inputSecret): bool
+    {
+        if ($hasher->check($inputSecret, $hash) === false) {
+            throw new SecretValidatorException('Wrong Secret');
+        }
+
+        return true;
+    }
+
     protected static function findAll(
         $context = null,
         $contextId = null,

@@ -104,6 +104,36 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
+    public function save():self
+    {
+        $this->setSecret($this->encryptedSecretStr ?? $this->secretStr);
+
+        $defaultStoreUntilMinutes = config('secrets.store_until_minutes', 0);
+        if ($this->model->store_until === null and $defaultStoreUntilMinutes !== 0) {
+            $this->model->store_until = Carbon::now()->addMinutes($defaultStoreUntilMinutes);
+        }
+
+        $defaultValidUntilMinutes = config('secrets.valid_until_minutes', 0);
+        if ($this->model->valid_until === null and $defaultValidUntilMinutes !== 0) {
+            $this->model->valid_until = Carbon::now()->addMinutes($defaultValidUntilMinutes);
+        }
+
+        $defaultAttemps = config('secrets.attemps', 0);
+        if ($this->model->attemps_cnt === null and $defaultAttemps !== 0) {
+            $this->model->attemps_cnt = $defaultAttemps;
+        }
+
+        $defaultValidFromMinutes = config('secrets.valid_from_minutes', 0);
+        if ($this->model->valid_from === null and $defaultValidFromMinutes !== 0) {
+            $this->model->valid_from = Carbon::now()->addMinutes($defaultValidFromMinutes);
+        }
+
+        $this->model->save();
+
+        return $this;
+    }
+
+
     protected function initModel(): void
     {
         $this->model = new Secret();

@@ -154,10 +154,19 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
-
     protected function initModel(): void
     {
         $this->model = new Secret();
+    }
+
+    public static function create($context = null, $contextId = null, $owner = null, $ownerId = null): self
+    {
+        return new static($context, $contextId, $owner, $ownerId);
+    }
+
+    public static function check(string $inputSecret, string $context = '', $contextId = '', $owner = '', $ownerId = ''): Checker
+    {
+        return new Checker($inputSecret, $context, $contextId, $owner, $ownerId);
     }
 
 }

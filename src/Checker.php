@@ -97,4 +97,32 @@ class Checker extends SecretsAbstract
         return $this;
     }
 
+    public function withRemove(): self
+    {
+        $this->onAfterSave = function () {
+            if ($this->currentSecret->success_enter !== null) {
+                $this->currentSecret->delete();
+            }
+        };
+
+        return $this;
+    }
+
+    public function onSuccess(Closure $callback): self
+    {
+        $this->onSuccess = $callback;
+
+        return $this;
+    }
+
+    public function onErrors(Closure $callback): self
+    {
+        $this->onErrors = $callback;
+
+        return $this;
+    }
+
+
+
+
 }

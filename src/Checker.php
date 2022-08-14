@@ -53,5 +53,48 @@ class Checker extends SecretsAbstract
         }
 
     }
+    
+    protected function setCurrentSecret(Secret $secret): void
+    {
+        $this->currentSecret = $secret;
+    }
+
+    protected function setLastEnter(Secret $secret, ?Carbon $dateTime): void
+    {
+        $secret->last_enter = $dateTime ?? Carbon::now();
+    }
+
+    protected function setSuccessEnter(Secret $secret, ?Carbon $dateTime): void
+    {
+        $secret->success_enter = $dateTime ?? Carbon::now();
+    }
+
+    public function setDissalowSuccessTimestamp(bool $value = true): self
+    {
+        $this->dissalowSuccessTimestamp = $value;
+
+        return $this;
+    }
+
+    public function allowMultiple(bool $value = true): self
+    {
+        $this->isMultiple = $value;
+
+        return $this;
+    }
+
+    public function setUnlimitedAttemps(bool $value = true): self
+    {
+        $this->isUnlimitedAttemps = $value;
+
+        return $this;
+    }
+
+    public function setEncrypt(SecretHasherContract $hasher): self
+    {
+        $this->hasher = $hasher;
+
+        return $this;
+    }
 
 }

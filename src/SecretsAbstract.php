@@ -3,8 +3,10 @@
 namespace Aldemco\Secrets;
 
 use Aldemco\Secrets\Models\Secret;
+use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Exceptions\SecretValidatorException;
 use Illuminate\Database\Eloquent\Collection;
+use Carbon\Carbon;
 
 abstract class SecretsAbstract
 {

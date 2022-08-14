@@ -33,11 +33,11 @@ class Checker extends SecretsAbstract
 
     private bool $isUnlimitedAttemps = false;
 
-    private ?Closure $onAfterSave = function(){};
+    private ?Closure $onAfterSave = null;
 
-    private ?Closure $onErrors = function(){};
+    private ?Closure $onErrors = null;
 
-    private ?Closure $onSuccess = function(){};
+    private ?Closure $onSuccess = null;
 
     public function __construct(string $inpitSecretStr, $context = '', $contextId = '', $owner = '', $ownerId = '')
     {
@@ -168,7 +168,7 @@ class Checker extends SecretsAbstract
 
         $this->verifyAll();
 
-        if ($this->execptions->count()) {
+        if ($this->execptions->count() && $this->onErrors) {
             $this->onErrors->call($this, $this->execptions);
         }
 
@@ -181,7 +181,7 @@ class Checker extends SecretsAbstract
             $this->setCurrentSecret($secret);
 
             try {
-                $this->setLastEnter($secret);
+                $this->setLastEnter($secret, null);
                 $this->isValid($secret);
 
                 $secretStr = $this->currentSecret->secret;
@@ -193,7 +193,7 @@ class Checker extends SecretsAbstract
                 }
 
                 if ($this->isCorrectSecret) {
-                    $this->dissalowSuccessTimestamp ?? $this->setSuccessEnter($secret);
+                    $this->dissalowSuccessTimestamp ?? $this->setSuccessEnter($secret, null);
 
                     if ($this->onSuccess) {
                         $this->onSuccess->call($this);
@@ -213,5 +213,9 @@ class Checker extends SecretsAbstract
                 return false;
             }
         });
+
+        if ($this->onErrors === null && $this->execptions->count() > 0) {
+            throw  $this->execptions->last();
+        }
     }
 }

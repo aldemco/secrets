@@ -3,10 +3,26 @@
 namespace Aldemco\Secrets;
 
 use Aldemco\Secrets\Models\Secret;
+use Aldemco\Secrets\Exceptions\SecretValidatorException;
 use Illuminate\Database\Eloquent\Collection;
 
 abstract class SecretsAbstract
 {
+
+    protected function secretTypeValidator($secret): void
+    {
+        if (! (bool) (is_string($secret) || is_numeric($secret))) {
+            throw new SecretValidatorException('Incorrect secret type');
+        }
+    }
+
+    protected function secretLenValidator($secret): void
+    {
+        if (strlen($secret) > 255) {
+            throw new SecretValidatorException('Incorrect secret length');
+        }
+    }
+
     protected static function findAll(
         $context = null,
         $contextId = null,

@@ -51,6 +51,16 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
+    public function genCustomSecret(callable $generator): self
+    {
+        $secretStr = $generator();
+        $this->secretLenValidator($secretStr);
+        $this->secretTypeValidator($secretStr);
+        $this->secretStr = $secretStr;
+
+        return $this;
+    }
+
     public function encrypt(SecretHasherContract $hasher): self
     {
         $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);

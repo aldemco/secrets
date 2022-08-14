@@ -51,11 +51,52 @@ class Secrets extends SecretsAbstract
         return $this;
     }
 
+    public function encrypt(SecretHasherContract $hasher): self
+    {
+        $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);
+        $this->model->is_crypt = true;
+
+        return $this;
+    }
+
+    protected function setSecret(string $secret): self
+    {
+        $this->model->secret = $secret;
+
+        return $this;
+    }
+
+    public function setValidFrom(Carbon $from): self
+    {
+        $this->model->valid_from = $from;
+
+        return $this;
+    }
+
+    public function setValidUntil(Carbon $until): self
+    {
+        $this->model->valid_until = $until;
+
+        return $this;
+    }
+
+    public function setStoreUntil(Carbon $until): self
+    {
+        $this->model->store_until = $until;
+
+        return $this;
+    }
+
+    public function setAttemps(int $attemps): self
+    {
+        $this->model->attemps_cnt = $attemps;
+
+        return $this;
+    }
+
     protected function initModel(): void
     {
         $this->model = new Secret();
     }
-
-
 
 }

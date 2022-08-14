@@ -3,8 +3,10 @@
 namespace Aldemco\Secrets;
 
 use Aldemco\Secrets\Contracts\SecretHasherContract;
+use Aldemco\Secrets\Exceptions\SecretValidatorException;
 use Aldemco\Secrets\Models\Secret;
 use Illuminate\Database\Eloquent\Collection;
+use Carbon\Carbon;
 use Closure;
 
 class Checker extends SecretsAbstract
@@ -148,6 +150,73 @@ class Checker extends SecretsAbstract
         }
 
         $this->isNotUsed($secret);
+    }
+
+    protected function saveCurrentSecret(): void
+    {
+        $this->currentSecret->save();
+        if ($this->onAfterSave) {
+            $this->onAfterSave->call($this);
+        }
+    }
+
+    public function verify()
+    {
+        if ($this->isMultiple) {
+            $this->findSecrets($limit = config('secrets.multiple_limit', 10));
+        } else {
+            $this->findSecrets($limit = 1);
+        }
+
+        $this->verifyAll();
+
+        if ($this->execptions->count()) {
+            $this->onErrors->call($this, $this->execptions);
+        }
+
+        return $this;
+    }
+
+    protected function verifyAll()
+    {
+        $this->secretCollection->each(function (Secret $secret) {
+            $this->setCurrentSecret($secret);
+
+            try {
+                $this->setLastEnter($secret);
+                $this->isValid($secret);
+
+                $secretStr = $this->currentSecret->secret;
+
+                if ($this->currentSecret->is_crypt) {
+                    $this->isCorrectSecret = $this->isCorrectEncryptSecret($this->hasher, $secretStr, $this->inputSecretStr);
+                } else {
+                    $this->isCorrectSecret = $this->isCorrectSecret($secretStr, $this->inputSecretStr);
+                }
+
+                if ($this->isCorrectSecret) {
+                    $this->dissalowSuccessTimestamp ?? $this->setSuccessEnter($secret);
+
+                    if ($this->onSuccess) {
+                        $this->onSuccess->call($this);
+                    }
+
+                }
+            } catch (SecretValidatorException $e) {
+                $this->execptions->add($e);
+            }
+
+            if ($this->isUnlimitedAttemps === false && $this->isCorrectSecret === false) {
+                $this->currentSecret->attemps_cnt--;
+            }
+
+            $this->saveCurrentSecret();
+
+            if ($this->isCorrectSecret === true) {
+                return false;
+            }
+
+        });
     }
 
 

@@ -1,6 +1,7 @@
 <?php
 
 use Aldemco\Secrets\Models\Secret;
+use Aldemco\Secrets\SecretGenerator;
 use Aldemco\Secrets\SecretHasher;
 use Aldemco\Secrets\Secrets;
 use Aldemco\Secrets\Tests\TestCase;

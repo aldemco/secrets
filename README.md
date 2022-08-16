@@ -67,3 +67,14 @@ Secrets::check(inputSecret: '112544')->verify();
 
 
 ```
+
+## Installation
+You can install the package via composer:
+```
+composer require aldemco/secrets
+```
+
+## Testing
+```
+composer test
+```

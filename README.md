@@ -15,23 +15,22 @@ use Aldemco\Secrets\Secrets;
 /**
  * Full
  */
-Secrets::create(
-    context:'Register',
-    contextId: '+70000000000',
-    owner: null,
-    ownerId: null )
-        ->encrypt(new SecretHasher)
-        ->genSecretStr(new Aldemco\Secrets\SecretGenerator)
-        ->length(6)
-        ->setStoreUntil(Carbon\Carbon::now()->addDay(1))
-        ->setValidFrom(Carbon\Carbon::now()->addSecond(1))
-        ->setValidUntil(Carbon\Carbon::now()->addMinutes(10))
-        ->setAttemps(5)
-        ->withInterval(60)
-        ->genCustomSecret(function(){
-            return \Str::UUID()->toString();
-        })
-        ->save();
+    Secrets::create(
+        context:'Verify',
+        contextId: null,
+        owner: 'User',
+        ownerId: 1 )
+            ->length(6)
+            ->setStoreUntil(Carbon\Carbon::now()->addDay(1))
+            ->setValidUntil(Carbon\Carbon::now()->addMinutes(10))
+            ->setAttemps(5)
+            ->withInterval(60)
+            ->genSecretStr(new Aldemco\Secrets\SecretGenerator)
+            ->genCustomSecret(function(){
+                return \Str::UUID()->toString();
+            })
+            ->encrypt(new Aldemco\Secrets\SecretHasher)
+            ->save();
 
 /**
  * Minimal
@@ -55,7 +54,6 @@ Secrets::check(
         ->withRemove()
         ->setEncrypt(new SecretHasher)
         ->setUnlimitedAttemps()
-        ->onErrors(function($execptions){})
         ->onSuccess(function() {})
         ->verify();
 

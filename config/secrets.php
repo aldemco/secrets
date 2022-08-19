@@ -2,6 +2,7 @@
 
 // config for Aldemco/Secrets
 return [
+    'table' => 'secrets',
     'length' => 6,
     'secret_generator' => Aldemco\Secrets\SecretGenerator::class,
     'code_hasher' => Aldemco\Secrets\SecretHasher::class,

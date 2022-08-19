@@ -22,9 +22,11 @@ class SecretsServiceProvider extends PackageServiceProvider
     public function boot()
     {
         parent::boot();
-        // $this->app->booted(function () {
-        //     $schedule = app(Schedule::class);
-        //     $schedule->command('secrets:clear')->everyMinute();
-        // });
+        $this->app->booted(function () {
+            if (config('secrets.auto_clearing', false)) {
+                $schedule = app(Schedule::class);
+                $schedule->command('secrets:clear')->dailyAt(config('secrets.auto_clearing_dayly_at', '01:00'));
+            }
+        });
     }
 }

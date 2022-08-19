@@ -1,7 +1,7 @@
 <?php
 
 use Aldemco\Secrets\Models\Secret;
-use Aldemco\Secrets\Secrets;
+use Aldemco\Secrets\Facades\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
 use Carbon\Carbon;
 
@@ -9,7 +9,7 @@ class ConsoleTest extends TestCase
 {
     public function testClearSecretsAll()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             Secrets::create('Register')->setAttemps(1)->save();
         }
 
@@ -22,7 +22,7 @@ class ConsoleTest extends TestCase
 
     public function testClearSecretsUnactive()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             Secrets::create('Register')->setAttemps(1)
                 ->setValidFrom(Carbon::now()->addMinute())
                 ->setValidUntil(Carbon::now()->subMinute())
@@ -38,7 +38,7 @@ class ConsoleTest extends TestCase
 
     public function testClearSecretsExpired()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             Secrets::create('Register')->setAttemps(1)
                 ->setStoreUntil(Carbon::now()->addMinute())
                 ->save();
@@ -53,7 +53,7 @@ class ConsoleTest extends TestCase
 
     public function testClearWithoutAttemps()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             Secrets::create('Register')->setAttemps(1)
                 ->setAttemps(0)
                 ->save();
@@ -69,7 +69,7 @@ class ConsoleTest extends TestCase
     public function testClearUsed()
     {
         $secrets = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $secrets[] = Secrets::create(
                 context:'Verify',
                 owner: 'User',

@@ -1,8 +1,9 @@
 <?php
 
+use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Models\Secret;
 use Aldemco\Secrets\SecretHasher;
-use Aldemco\Secrets\Secrets;
+use Aldemco\Secrets\Facades\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -12,12 +13,12 @@ class CheckerSecretTest extends TestCase
     public function testCheckEncryptSecret()
     {
         $secret = Secrets::create()
-        ->encrypt(new SecretHasher)
+        ->encrypt(app(SecretHasherContract::class))
         ->setAttemps(5)
         ->save();
 
         Secrets::check($secret->secretStr)
-        ->setEncrypt(new SecretHasher)
+        ->setEncrypt(app(SecretHasherContract::class))
         ->verify();
 
         $this->assertTrue(true);
@@ -28,12 +29,12 @@ class CheckerSecretTest extends TestCase
         $this->expectExceptionMessage('Wrong Secret');
 
         $secret = Secrets::create()
-        ->encrypt(new SecretHasher)
+        ->encrypt(app(SecretHasherContract::class))
         ->setAttemps(5)
         ->save();
 
         Secrets::check($secret->secretStr.'incorrect')
-        ->setEncrypt(new SecretHasher)
+        ->setEncrypt(app(SecretHasherContract::class))
         ->verify();
     }
 
@@ -201,6 +202,7 @@ class CheckerSecretTest extends TestCase
                 ->verify();
             } catch (Exception $e) {
             }
+
 
             $res = Secrets::check(
                 inputSecret: $secret,

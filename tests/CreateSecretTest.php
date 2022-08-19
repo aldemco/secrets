@@ -2,7 +2,7 @@
 
 use Aldemco\Secrets\Models\Secret;
 use Aldemco\Secrets\SecretHasher;
-use Aldemco\Secrets\Secrets;
+use Aldemco\Secrets\Facades\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
 use Carbon\Carbon;
 

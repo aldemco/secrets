@@ -11,6 +11,6 @@ class Secrets extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'secrets';
+        return \Aldemco\Secrets\Secrets::class;
     }
 }

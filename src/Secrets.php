@@ -40,12 +40,12 @@ class Secrets
         $this->model->context_id = $contextId;
 
         $secretGeneratorClass = config('secrets.secret_generator', Aldemco\Secrets\SecretGenerator::class);
-        $this->secretGenerator = new $secretGeneratorClass;
+        $this->secretGenerator = app(SecretGeneratorContract::class);
+
         $this->genSecretStr(null);
 
         if (config('secrets.is_crypt') === true) {
-            $hasherClass = config('secrets.secret_hasher', Aldemco\Secrets\SecretHasher::class);
-            $this->encrypt(new $hasherClass);
+            $this->encrypt(app(SecretHasherContract::class));
         }
     }
 
@@ -132,7 +132,7 @@ class Secrets
          * @var Secret $lastSecret
          */
         $lastSecret = self::findAll(
-            context: (string) $this->model->context,
+            context: (string)$this->model->context,
             contextId: (string) $this->model->context_id,
             owner: (string) $this->model->owner_class,
             ownerId: (string) $this->model->owner_id,

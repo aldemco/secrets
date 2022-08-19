@@ -63,8 +63,7 @@ class Checker
         $this->execptions = new Collection();
 
         if (config('secrets.is_crypt') === true) {
-            $secretHasherClass = config('secrets.secret_hasher', Aldemco\Secrets\SecretHasher::class);
-            $this->hasher = new $secretHasherClass;
+            $this->hasher = app(SecretHasherContract::class);
         }
     }
 

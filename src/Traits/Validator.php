@@ -1,23 +1,24 @@
 <?php
 
-namespace Aldemco\Secrets;
+declare(strict_types=1);
+
+namespace Aldemco\Secrets\Traits;
 
 use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Exceptions\SecretValidatorException;
 use Aldemco\Secrets\Models\Secret;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
-abstract class SecretsAbstract
+trait Validator
 {
-    protected function secretTypeValidator($secret): void
+    protected function secretTypeValidator($secretStr): void
     {
-        if (! (bool) (is_string($secret) || is_numeric($secret))) {
+        if (! (bool) (is_string($secretStr))) {
             throw new SecretValidatorException('Incorrect secret type');
         }
     }
 
-    protected function secretLenValidator($secret): void
+    protected function secretLenValidator(string $secret): void
     {
         if (strlen($secret) > 255) {
             throw new SecretValidatorException('Incorrect secret length');
@@ -35,7 +36,7 @@ abstract class SecretsAbstract
 
     protected function isValidFrom(Secret $secret): bool
     {
-        if (Carbon::now() <= $secret->valid_from && $secret->valid_from !== null) {
+        if (Carbon::now() < $secret->valid_from && $secret->valid_from !== null) {
             throw new SecretValidatorException('The secret is not valid');
         }
 
@@ -44,7 +45,7 @@ abstract class SecretsAbstract
 
     protected function isAllowEnter(Secret $secret): bool
     {
-        if ($secret->attemps_cnt <= 0) {
+        if ($secret->attemps_cnt < 1) {
             throw new SecretValidatorException('The limit of attempts to enter a secret has been exhausted');
         }
 
@@ -69,7 +70,7 @@ abstract class SecretsAbstract
         return true;
     }
 
-    protected function isCorrectEncryptSecret(SecretHasherContract $hasher, string|int $hash, string|int $inputSecret): bool
+    protected function isCorrectEncryptSecret(SecretHasherContract $hasher, string $hash, string $inputSecret): bool
     {
         if ($hasher->check($inputSecret, $hash) === false) {
             throw new SecretValidatorException('Wrong Secret');
@@ -83,42 +84,5 @@ abstract class SecretsAbstract
         if ($lastSecret->created_at->addSeconds($seconds) >= Carbon::now()) {
             throw new SecretValidatorException('Too frequent requests');
         }
-    }
-
-    protected static function findAll(
-        $context = null,
-        $contextId = null,
-        $owner = null,
-        $ownerId = null,
-        $secret = null,
-        $limit = 1
-    ): Collection {
-        $secrets = Secret::when($context, fn ($q) => $q->where('context', $context))
-                ->when($contextId, fn ($q) => $q->where('context_id', $contextId))
-                ->when($owner, fn ($q) => $q->where('owner_class', $owner))
-                ->when($ownerId, fn ($q) => $q->where('owner_id', $ownerId))
-                ->when($secret, fn ($q) => $q->where('secret', $secret))
-                ->whereNull('success_enter')
-                //->where('attemps_cnt', '>', 0)
-                // ->where('valid_until', '>=', Carbon::now())
-                // ->where('valid_from',  '<=', Carbon::now())
-                // ->orWhere('valid_from', null)
-                ->limit($limit)
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-        return $secrets;
-    }
-
-    protected static function getContextClass(): string
-    {
-        $trace = debug_backtrace();
-        foreach ($trace as $item) {
-            if ($item['class'] !== self::class) {
-                return $item['class'];
-            }
-        }
-
-        return $trace[0]['class'];
     }
 }

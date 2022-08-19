@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Aldemco\Secrets;
 
 use Aldemco\Secrets\Contracts\SecretGeneratorContract;
 use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Models\Secret;
+use Aldemco\Secrets\Traits\Helper;
+use Aldemco\Secrets\Traits\Validator;
 use Carbon\Carbon;
 
-class Secrets extends SecretsAbstract
+class Secrets
 {
+    use Helper, Validator;
+
     public string $secretStr;
 
     private Secret $model;
@@ -126,10 +132,10 @@ class Secrets extends SecretsAbstract
          * @var Secret $lastSecret
          */
         $lastSecret = self::findAll(
-            context:$this->model->context,
-            contextId:$this->model->context_id,
-            owner:$this->model->owner_class,
-            ownerId:$this->model->owner_id,
+            context: (string) $this->model->context,
+            contextId: (string) $this->model->context_id,
+            owner: (string) $this->model->owner_class,
+            ownerId: (string) $this->model->owner_id,
             limit:1
         )->first();
 

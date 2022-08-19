@@ -1,7 +1,6 @@
 <?php
 
 use Aldemco\Secrets\Models\Secret;
-use Aldemco\Secrets\SecretGenerator;
 use Aldemco\Secrets\SecretHasher;
 use Aldemco\Secrets\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
@@ -100,7 +99,7 @@ class CreateSecretTest extends TestCase
             ->first();
 
         if ($secret->secret === $custom) {
-            throw Exception('encrypt not working');
+            throw  new Exception('encrypt not working');
         }
 
         $this->assertInstanceOf(Secret::class, $secret);

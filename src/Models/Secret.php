@@ -48,5 +48,13 @@ class Secret extends Model
 
     protected $table = 'secrets';
 
+    public int $status = 0;
+
     const UPDATED_AT = null;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->table = config('secrets.table', 'secrets');
+    }
 }

@@ -13,7 +13,7 @@ class ConsoleTest extends TestCase
             Secrets::create('Register')->setAttemps(1)->save();
         }
 
-        $this->artisan('secrets:clear Register all');
+        $this->artisan('secrets:clear all Register');
 
         $secret = Secret::find(1);
 
@@ -29,7 +29,7 @@ class ConsoleTest extends TestCase
                 ->save();
         }
 
-        $this->artisan('secrets:clear Register unactive');
+        $this->artisan('secrets:clear unactive Register');
 
         $secret = Secret::find(1);
 
@@ -44,7 +44,7 @@ class ConsoleTest extends TestCase
                 ->save();
         }
 
-        $this->artisan('secrets:clear Register expired');
+        $this->artisan('secrets:clear expired Register');
 
         $secret = Secret::find(1);
 
@@ -59,7 +59,7 @@ class ConsoleTest extends TestCase
                 ->save();
         }
 
-        $this->artisan('secrets:clear Register witoutAttemps');
+        $this->artisan('secrets:clear witoutAttemps Register');
 
         $secret = Secret::find(1);
 
@@ -88,7 +88,7 @@ class ConsoleTest extends TestCase
             ->getResult();
         }
 
-        $this->artisan('secrets:clear Verify used');
+        $this->artisan('secrets:clear used Verify');
 
         $secret = Secret::find(1);
 

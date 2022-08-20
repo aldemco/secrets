@@ -33,6 +33,8 @@ class Checker
 
     private string $contextId;
 
+    private string $owner;
+
     private string $ownerId;
 
     private string $inputSecretStr;
@@ -53,18 +55,21 @@ class Checker
 
     const STATUS_INCORRECT = 2;
 
-    public function __construct(string $inpitSecretStr, $context = '', $contextId = '', $owner = '', $ownerId = '')
+    public function __construct(
+        string $inputSecretStr,
+        string $context,
+        string $contextId,
+        string $owner,
+        string $ownerId,
+        ?SecretHasherContract $hasher)
     {
         $this->context = (string) $context ?? $this->context = self::getcontextClass();
         $this->contextId = (string) $contextId;
         $this->owner = (string) $owner;
         $this->ownerId = (string) $ownerId;
-        $this->inputSecretStr = $inpitSecretStr;
+        $this->inputSecretStr = $inputSecretStr;
         $this->execptions = new Collection();
-
-        if (config('secrets.is_crypt') === true) {
-            $this->hasher = app(SecretHasherContract::class);
-        }
+        $this->hasher = $hasher;
     }
 
     protected function setCurrentSecret(Secret $secret): void

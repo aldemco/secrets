@@ -37,6 +37,7 @@ trait Helper
     protected static function getContextClass(): string
     {
         $trace = debug_backtrace();
+
         foreach ($trace as $item) {
             if ($item['class'] !== self::class) {
                 return $item['class'];

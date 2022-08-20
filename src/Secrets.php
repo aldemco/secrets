@@ -25,27 +25,27 @@ class Secrets
 
     private SecretGeneratorContract $secretGenerator;
 
-    public function __construct($context = null, $contextId = null, $owner = null, $ownerId = null)
-    {
-        $this->initModel();
+    private SecretHasherContract $hasher;
 
+    public function __construct(
+        string $context = '',
+        string $contextId = '',
+        string $owner = '',
+        string $ownerId = '',
+        ?SecretHasherContract $hasher,
+        ?SecretGeneratorContract $secretGenerator
+    ) {
+        $this->initModel();
         $this->model->owner = $owner;
         $this->model->owner_id = $ownerId;
-
-        if ($context === null) {
-            $context = self::getContextClass();
-        }
-
         $this->model->context = $context;
         $this->model->context_id = $contextId;
-
-        $secretGeneratorClass = config('secrets.secret_generator', Aldemco\Secrets\SecretGenerator::class);
-        $this->secretGenerator = app(SecretGeneratorContract::class);
-
+        $this->secretGenerator = $secretGenerator;
+        $this->hasher = $hasher;
         $this->genSecretStr(null);
 
         if (config('secrets.is_crypt') === true) {
-            $this->encrypt(app(SecretHasherContract::class));
+            $this->encrypt(null);
         }
     }
 
@@ -74,9 +74,14 @@ class Secrets
         return $this;
     }
 
-    public function encrypt(SecretHasherContract $hasher): self
+    public function encrypt(?SecretHasherContract $hasher): self
     {
-        $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);
+        if ($hasher) {
+            $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);
+        } else {
+            $this->encryptedSecretStr = $this->hasher;
+        }
+
         $this->model->is_crypt = true;
 
         return $this;
@@ -132,7 +137,7 @@ class Secrets
          * @var Secret $lastSecret
          */
         $lastSecret = self::findAll(
-            context: (string)$this->model->context,
+            context: (string) $this->model->context,
             contextId: (string) $this->model->context_id,
             owner: (string) $this->model->owner_class,
             ownerId: (string) $this->model->owner_id,
@@ -180,13 +185,41 @@ class Secrets
         $this->model = new Secret();
     }
 
-    public static function create($context = null, $contextId = null, $owner = null, $ownerId = null): self
+    public static function create(
+        string $context = '',
+        string $contextId  = '',
+        string $owner  = '',
+        string $ownerId  = ''): self
     {
-        return new static($context, $contextId, $owner, $ownerId);
+        if ($context === '') {
+            $context = self::getContextClass();
+        }
+
+        return app(self::class, [
+            'context' => $context,
+            'contextId' => $contextId,
+            'owner' => $owner,
+            'ownerId' => $ownerId,
+        ]);
     }
 
-    public static function check(string $inputSecret, string $context = '', $contextId = '', $owner = '', $ownerId = ''): Checker
+    public static function check(
+        string $inputSecret,
+        string $context = '',
+        string $contextId = '',
+        string $owner = '',
+        string $ownerId = ''): Checker
     {
-        return new Checker($inputSecret, $context, $contextId, $owner, $ownerId);
+        if ($context === '') {
+            $context = self::getContextClass();
+        }
+
+        return app(Checker::class, [
+            'inputSecretStr' => $inputSecret,
+            'context' => $context,
+            'contextId' => $contextId,
+            'owner' => $owner,
+            'ownerId' => $ownerId,
+        ]);
     }
 }

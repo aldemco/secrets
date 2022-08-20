@@ -2,8 +2,7 @@
 
 use Aldemco\Secrets\Contracts\SecretHasherContract;
 use Aldemco\Secrets\Models\Secret;
-use Aldemco\Secrets\SecretHasher;
-use Aldemco\Secrets\Facades\Secrets;
+use Aldemco\Secrets\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -96,7 +95,7 @@ class CheckerSecretTest extends TestCase
         ->setAttemps(1)
         ->save();
 
-        Secrets::check($secret->secretStr)->withRemove()->verify();
+        Secrets::check($secret->secretStr, 'test')->withRemove()->verify();
 
         $secret = Secret::where('context', 'test')
         ->first();
@@ -145,7 +144,6 @@ class CheckerSecretTest extends TestCase
     {
         $secretStr = Secrets::create(
             context:'Verify',
-            contextId: null,
             owner: 'User',
             ownerId: 1)
                 ->length(6)
@@ -190,7 +188,7 @@ class CheckerSecretTest extends TestCase
 
         $secrets = [];
         for ($i = 0; $i < 2; $i++) {
-            $secrets[] = Secrets::create(1)->setAttemps(1)->save()->secretStr;
+            $secrets[] = Secrets::create()->setAttemps(1)->save()->secretStr;
         }
 
         foreach (Arr::shuffle($secrets) as $secret) {
@@ -202,7 +200,6 @@ class CheckerSecretTest extends TestCase
                 ->verify();
             } catch (Exception $e) {
             }
-
 
             $res = Secrets::check(
                 inputSecret: $secret,
@@ -219,7 +216,7 @@ class CheckerSecretTest extends TestCase
     {
         $secrets = [];
         for ($i = 0; $i < 10; $i++) {
-            $secrets[] = Secrets::create(1)->setAttemps(3)->save()->secretStr;
+            $secrets[] = Secrets::create()->setAttemps(3)->save()->secretStr;
         }
 
         foreach (array_slice(Arr::shuffle($secrets), 0, 5) as $secret) {

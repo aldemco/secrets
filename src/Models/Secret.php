@@ -2,6 +2,7 @@
 
 namespace Aldemco\Secrets\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,5 +57,42 @@ class Secret extends Model
     {
         parent::__construct();
         $this->table = config('secrets.table', 'secrets');
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUnactive($query)
+    {
+        return $query->where('valid_until', '<=', Carbon::now())
+            ->where('valid_from', '>=', Carbon::now());
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExpired($query)
+    {
+        return $query->where('store_until', '>=', Carbon::now());
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUsed($query)
+    {
+        return $query->whereNotNull('success_enter');
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithoutAttemps($query)
+    {
+        return $query->where('attemps_cnt', '<', 1);
     }
 }

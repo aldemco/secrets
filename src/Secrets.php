@@ -17,21 +17,21 @@ class Secrets
 
     public string $secretStr;
 
-    private Secret $model;
-
     private string $encryptedSecretStr;
 
     private int $secretStrLength = 6;
+
+    private Secret $model;
 
     private SecretGeneratorContract $secretGenerator;
 
     private SecretHasherContract $hasher;
 
     public function __construct(
-        string $context = '',
-        string $contextId = '',
-        string $owner = '',
-        string $ownerId = '',
+        string $context = null,
+        string $contextId = null,
+        string $owner = null,
+        string $ownerId = null,
         ?SecretHasherContract $hasher,
         ?SecretGeneratorContract $secretGenerator
     ) {
@@ -76,10 +76,10 @@ class Secrets
 
     public function encrypt(?SecretHasherContract $hasher): self
     {
-        if ($hasher) {
+        if ($hasher instanceof SecretGeneratorContract) {
             $this->encryptedSecretStr = $hasher->encrypt($this->secretStr);
         } else {
-            $this->encryptedSecretStr = $this->hasher;
+            $this->encryptedSecretStr = $this->hasher->encrypt($this->secretStr);
         }
 
         $this->model->is_crypt = true;
@@ -130,7 +130,7 @@ class Secrets
         return $this;
     }
 
-    public function withInterval(int $seconds): self
+    public function withInterval(?int $seconds): self
     {
         $seconds = $seconds ?? config('secrets.interval', 60);
         /**
@@ -139,7 +139,7 @@ class Secrets
         $lastSecret = self::findAll(
             context: (string) $this->model->context,
             contextId: (string) $this->model->context_id,
-            owner: (string) $this->model->owner_class,
+            owner: (string) $this->model->owner,
             ownerId: (string) $this->model->owner_id,
             limit:1
         )->first();

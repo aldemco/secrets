@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $owner_id
  * @property string $secret
  * @property bool $is_crypt
- * @property string|null $valid_until
- * @property string|null $valid_from
- * @property string|null $store_until
- * @property string|null $last_enter
- * @property string|null $success_enter
+ * @property string|null|Carbon $valid_until
+ * @property string|null|Carbon $valid_from
+ * @property string|null|Carbon $store_until
+ * @property string|null|Carbon $last_enter
+ * @property string|null|Carbon $success_enter
  * @property int $attemps_cnt
  * @property \Illuminate\Support\Carbon $created_at
  *

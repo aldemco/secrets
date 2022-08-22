@@ -5,6 +5,9 @@ namespace Aldemco\Secrets;
 use Aldemco\Secrets\Commands\SecretsCommand;
 use Aldemco\Secrets\Contracts\SecretGeneratorContract;
 use Aldemco\Secrets\Contracts\SecretHasherContract;
+use Aldemco\Secrets\SecretHasher;
+use Aldemco\Secrets\SecretGenerator;
+
 use Illuminate\Console\Scheduling\Schedule;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -35,13 +38,13 @@ class SecretsServiceProvider extends PackageServiceProvider
     public function packageBooted()
     {
         $this->app->singleton(SecretHasherContract::class, function ($app) {
-            $hasherClass = config('secrets.secret_hasher', Aldemco\Secrets\SecretHasher::class);
+            $hasherClass = config('secrets.secret_hasher', SecretHasher::class);
 
             return new $hasherClass;
         });
 
         $this->app->singleton(SecretGeneratorContract::class, function ($app) {
-            $generatorClass = config('secrets.secret_generator', Aldemco\Secrets\SecretGenerator::class);
+            $generatorClass = config('secrets.secret_generator', SecretGenerator::class);
 
             return new $generatorClass;
         });

@@ -147,7 +147,7 @@ class CheckerSecretTest extends TestCase
             owner: 'User',
             ownerId: 1)
                 ->length(6)
-                ->setStoreUntil(Carbon\Carbon::now()->addDay(1))
+                ->setStoreUntil(Carbon\Carbon::now()->addDay())
                 ->setValidFrom(Carbon\Carbon::now())
                 ->setValidUntil(Carbon\Carbon::now()->addMinutes(10))
                 ->setAttemps(5)

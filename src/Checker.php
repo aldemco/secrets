@@ -11,7 +11,7 @@ use Aldemco\Secrets\Traits\Helper;
 use Aldemco\Secrets\Traits\Validator;
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 /**
  * @property Collection<int, Secret> $secretCollection
@@ -45,6 +45,8 @@ class Checker
 
     private bool $isUnlimitedAttemps = false;
 
+    private bool $dissalowSuccessTimestamp = false;
+
     private ?Closure $onAfterSave = null;
 
     private ?Closure $onSuccess = null;
@@ -57,13 +59,13 @@ class Checker
 
     public function __construct(
         string $inputSecretStr,
-        string $context,
-        string $contextId,
-        string $owner,
-        string $ownerId,
+        string $context = null,
+        string $contextId = null,
+        string $owner = null,
+        string $ownerId = null,
         ?SecretHasherContract $hasher)
     {
-        $this->context = (string) $context ?? $this->context = self::getcontextClass();
+        $this->context = $context ?? self::getcontextClass();
         $this->contextId = (string) $contextId;
         $this->owner = (string) $owner;
         $this->ownerId = (string) $ownerId;
@@ -218,7 +220,9 @@ class Checker
                 }
 
                 if ($this->isCorrectSecret) {
-                    $this->dissalowSuccessTimestamp ?? $this->setSuccessEnter($secret, null);
+
+                    if($this->dissalowSuccessTimestamp === false) $this->setSuccessEnter($secret, null);
+
                     $secret->status = self::STATUS_VERIFY;
                     if ($this->onSuccess) {
                         $this->onSuccess->call($this);

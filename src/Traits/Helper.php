@@ -34,7 +34,7 @@ trait Helper
         return $secrets;
     }
 
-    protected static function getContextClass(): string
+    protected static function getContextClassName(): string
     {
         $trace = debug_backtrace();
 

@@ -187,12 +187,12 @@ class Secrets
 
     public static function create(
         string $context = '',
-        string $contextId  = '',
-        string $owner  = '',
-        string $ownerId  = ''): self
+        string $contextId = '',
+        string $owner = '',
+        string $ownerId = ''): self
     {
         if ($context === '') {
-            $context = self::getContextClass();
+            $context = self::getContextClassName();
         }
 
         return app(self::class, [
@@ -211,7 +211,7 @@ class Secrets
         string $ownerId = ''): Checker
     {
         if ($context === '') {
-            $context = self::getContextClass();
+            $context = self::getContextClassName();
         }
 
         return app(Checker::class, [

@@ -65,7 +65,7 @@ class Checker
         string $ownerId = null,
         ?SecretHasherContract $hasher)
     {
-        $this->context = $context ?? self::getcontextClass();
+        $this->context = $context ?? self::getContextClassName();
         $this->contextId = (string) $contextId;
         $this->owner = (string) $owner;
         $this->ownerId = (string) $ownerId;
@@ -117,7 +117,7 @@ class Checker
         return $this;
     }
 
-    public function withRemove(): self
+    public function removeOnSuccess(): self
     {
         $this->onAfterSave = function () {
             if ($this->currentSecret->success_enter !== null) {
@@ -133,33 +133,6 @@ class Checker
         $this->onSuccess = $callback;
 
         return $this;
-    }
-
-    protected function findSecrets(int $limit = 1, string $secretStr = ''): void
-    {
-        $this->secretCollection = self::findAll(
-            $context = $this->context,
-            $contextId = $this->contextId,
-            $owner = $this->owner,
-            $ownerId = $this->ownerId,
-            $secret = $secretStr,
-            $limit = $limit,
-        );
-
-        if ($this->secretCollection->count() < 1) {
-            throw new SecretValidatorException('Wrong Secret');
-        }
-    }
-
-    protected function isValid(Secret $secret): void
-    {
-        $this->isValidUntil($secret);
-        $this->isValidFrom($secret);
-        if ($this->isUnlimitedAttemps === false) {
-            $this->isAllowEnter($secret);
-        }
-
-        $this->isNotUsed($secret);
     }
 
     public function getResult(): bool
@@ -220,8 +193,9 @@ class Checker
                 }
 
                 if ($this->isCorrectSecret) {
-
-                    if($this->dissalowSuccessTimestamp === false) $this->setSuccessEnter($secret, null);
+                    if ($this->dissalowSuccessTimestamp === false) {
+                        $this->setSuccessEnter($secret, null);
+                    }
 
                     $secret->status = self::STATUS_VERIFY;
                     if ($this->onSuccess) {
@@ -241,5 +215,32 @@ class Checker
                 $secret->attemps_cnt--;
             }
         }
+    }
+
+    protected function findSecrets(int $limit = 1, string $secretStr = ''): void
+    {
+        $this->secretCollection = self::findAll(
+            $context = $this->context,
+            $contextId = $this->contextId,
+            $owner = $this->owner,
+            $ownerId = $this->ownerId,
+            $secret = $secretStr,
+            $limit = $limit,
+        );
+
+        if ($this->secretCollection->count() < 1) {
+            throw new SecretValidatorException('Wrong Secret');
+        }
+    }
+
+    protected function isValid(Secret $secret): void
+    {
+        $this->isValidUntil($secret);
+        $this->isValidFrom($secret);
+        if ($this->isUnlimitedAttemps === false) {
+            $this->isAllowEnter($secret);
+        }
+
+        $this->isNotUsed($secret);
     }
 }

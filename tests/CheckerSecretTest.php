@@ -87,7 +87,7 @@ class CheckerSecretTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCheckWithRemove()
+    public function testCheckremoveOnSuccess()
     {
         $secret = Secrets::create(
             context: 'test'
@@ -95,7 +95,7 @@ class CheckerSecretTest extends TestCase
         ->setAttemps(1)
         ->save();
 
-        Secrets::check($secret->secretStr, 'test')->withRemove()->verify();
+        Secrets::check($secret->secretStr, 'test')->removeOnSuccess()->verify();
 
         $secret = Secret::where('context', 'test')
         ->first();
@@ -112,7 +112,7 @@ class CheckerSecretTest extends TestCase
         ->save();
 
         try {
-            Secrets::check($secret->secretStr.'Incorrect')->withRemove()->verify();
+            Secrets::check($secret->secretStr.'Incorrect')->removeOnSuccess()->verify();
         } catch (Exception $e) {
         }
 
@@ -132,7 +132,7 @@ class CheckerSecretTest extends TestCase
             Secrets::check($secret->secretStr)
             ->setUnlimitedAttemps()
             ->allowMultiple()
-            ->withRemove()
+            ->removeOnSuccess()
             ->verify();
         } catch (Exception $e) {
         }
@@ -166,7 +166,7 @@ class CheckerSecretTest extends TestCase
             ownerId: 1
         )
         ->setEncrypt(new Aldemco\Secrets\SecretHasher)
-        ->withRemove()
+        ->removeOnSuccess()
         ->setUnlimitedAttemps()
         ->onSuccess(function () {
         })
@@ -212,7 +212,7 @@ class CheckerSecretTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testMultipleWithRemove()
+    public function testMultipleremoveOnSuccess()
     {
         $secrets = [];
         for ($i = 0; $i < 10; $i++) {
@@ -224,7 +224,7 @@ class CheckerSecretTest extends TestCase
                 inputSecret: $secret,
             )
             ->allowMultiple()
-            ->withRemove()
+            ->removeOnSuccess()
             ->verify()
             ->getResult();
         }

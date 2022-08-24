@@ -1,7 +1,7 @@
 <?php
 
-use Aldemco\Secrets\Secrets;
 use Aldemco\Secrets\Models\Secret;
+use Aldemco\Secrets\Secrets;
 use Aldemco\Secrets\Tests\TestCase;
 use Carbon\Carbon;
 

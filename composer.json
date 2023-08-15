@@ -1,6 +1,6 @@
 {
     "name": "aldemco/secrets",
-    "version": "1.0",
+    "version": "1.1",
     "description": "The package implements the functionality of creating, storing, checking secrets",
     "keywords": [
         "aldemco",

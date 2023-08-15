@@ -16,7 +16,6 @@ class SecretsServiceProvider extends PackageServiceProvider
         $package
             ->name('secrets')
             ->hasConfigFile()
-            ->hasViews()
             ->hasMigration('create_secrets_table')
             ->hasCommand(SecretsCommand::class);
     }

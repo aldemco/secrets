@@ -1,6 +1,6 @@
 {
     "name": "aldemco/secrets",
-    "version": "1.1",
+    "version": "1.2",
     "description": "The package implements the functionality of creating, storing, checking secrets",
     "keywords": [
         "aldemco",
@@ -19,21 +19,20 @@
     "require": {
         "php": "^8.0",
         "spatie/laravel-package-tools": "^1.9.2",
-        "illuminate/contracts": "^9.30|^10.0"
+        "illuminate/contracts": "^9.30|^10.0|^11.0|^12.0|^13.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
-        "nunomaduro/collision": "^6.0",
-        "nunomaduro/larastan": "^2.0.1",
-        "nesbot/carbon" : "^2.63",
-        "orchestra/testbench": "^7.6|^8.0",
-        "pestphp/pest": "^1.22",
-        "pestphp/pest-plugin-laravel": "^1.3",
+        "nunomaduro/collision": "^6.0|^7.0|^8.0",
+        "nunomaduro/larastan": "^2.0.1|^3.0",
+        "nesbot/carbon": "^2.63|^3.0",
+        "orchestra/testbench": "^7.6|^8.0|^9.0|^10.0|^11.0",
+        "pestphp/pest": "^1.22|^2.34|^3.8",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^1.8",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
-        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.8|^2.0",
+        "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
+        "phpstan/phpstan-phpunit": "^1.0|^2.0",
+        "phpunit/phpunit": "^9.5|^10.5|^11.5",
         "spatie/laravel-ray": "^1.26"
     },
     "autoload": {

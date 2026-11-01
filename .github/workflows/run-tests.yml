@@ -2,11 +2,11 @@ name: run-tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, release/1.2]
     paths-ignore:
       - '**.md'
   pull_request:
-    branches: [main]
+    branches: [main, release/1.2]
 
 jobs:
   test:
@@ -15,14 +15,23 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.1, 8.2]
-        laravel: [9.*, 10.*]
         stability: [prefer-lowest, prefer-stable]
         include:
-          - laravel: 10.*
-            testbench: 8.*
-          - laravel: 9.*
+          - php: 8.1
+            laravel: 9.*
             testbench: 7.*
+          - php: 8.1
+            laravel: 10.*
+            testbench: 8.*
+          - php: 8.2
+            laravel: 11.*
+            testbench: 9.*
+          - php: 8.2
+            laravel: 12.*
+            testbench: 10.*
+          - php: 8.3
+            laravel: 13.*
+            testbench: 11.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -43,7 +52,7 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          composer require --dev "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-security-blocking
       - name: Execute tests
         run: vendor/bin/pest

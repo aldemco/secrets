@@ -1,0 +1,13 @@
+services:
+  tests:
+    build:
+      context: ./docker
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      LARAVEL_VERSION: ${LARAVEL_VERSION:-13}
+      XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command: ["bash", "/app/docker/test.sh"]

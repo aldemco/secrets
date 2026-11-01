@@ -122,6 +122,37 @@ composer require aldemco/secrets
 composer test
 ```
 
+### Testing and debugging with Docker Compose
+
+Run the test suite against a specific Laravel version (9, 10, 11, 12 or 13):
+
+```bash
+LARAVEL_VERSION=11 docker compose run --rm tests
+```
+
+The default version is Laravel 13. The container installs the matching Laravel
+framework and Orchestra Testbench version, then runs Pest. The project directory
+is mounted into the container, so code changes are immediately available.
+
+For interactive debugging, start a shell instead of the test runner:
+
+```bash
+docker compose run --rm --entrypoint bash tests -l
+```
+
+Xdebug is enabled in the container and connects to the host on port 9003. To run
+the test suite from the shell with a debugger attached, set `XDEBUG_TRIGGER=1`:
+
+```bash
+XDEBUG_TRIGGER=1 vendor/bin/pest
+```
+
+Set `XDEBUG_MODE=off` when you want to run tests without the debugger:
+
+```bash
+XDEBUG_MODE=off LARAVEL_VERSION=12 docker compose run --rm tests
+```
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
